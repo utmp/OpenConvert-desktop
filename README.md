@@ -20,6 +20,7 @@ There is one additional step required before installing.<br>
 Install **[ffmpeg](https://ffmpeg.org)** for video and audio convertion<br>
 - Windows `winget install --id=Gyan.FFmpeg  -e ` <br>
 - Linux: `apt install ffmpeg`
+- and then download executables from **[here](https://github.com/OpenConvert/OpenConvert-desktop/releases)**
 ## Screenshot
 
 <p align="center">
