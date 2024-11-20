@@ -5,8 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "package-win": "electron-forge package --platform=win32",
-    "package-linux": "electron-forge package --platform=linux"
+    "package-win": "electron-builder -w",
+    "package-linux": "electron-builder -l"
   },
   "keywords": [
     "converter",
@@ -20,11 +20,10 @@
   "author": "utmp",
   "license": "GPL-3.0",
   "dependencies": {
+    "electron-builder": "^25.1.8",
     "sharp": "^0.33.5"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.5.0",
-    "@electron-forge/maker-zip": "^7.5.0",
     "electron": "^33.0.2"
   }
 }
