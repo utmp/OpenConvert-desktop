@@ -13,7 +13,7 @@
       
   }
   .navbar {
-    background-color: #0f0d17;
+    background-image: linear-gradient(to right, #021526, #011932, #051c3d, #111e48, #211e51);
     padding-top:3%;
     padding-bottom:0.5%;
     display: flex;
@@ -42,7 +42,7 @@
     position: fixed;
     height:32px;
     width: calc(100% - 2px);
-    background: #0f0d17;
+    background: transparent;
     padding: 4px;
   }
   #titlebar #drag-region{
@@ -209,14 +209,13 @@
     }
     footer{
       position: fixed;
-      background: #0f0d17;
       width: 100%;
       bottom: 0;
       left: 0;
     }
     footer .bottom-details{
       width: 100%;
-      background: #0f0d17;
+      background: #021526;
     }
     footer .bottom-details .bottom_text{
       max-width: 1250px;
