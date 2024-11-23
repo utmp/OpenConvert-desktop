@@ -21,7 +21,7 @@ Section "Main program" main
     AddSize 315392
     SetOutPath $INSTDIR
     WriteUninstaller "$INSTDIR\Uninstall.exe"
-    inetc::get /caption "Main programm" /popup "" "https-link" "$INSTDIR\win.7z" /end ;edit https-link to file url
+    inetc::get /caption "Main program" /popup "" "https://github.com/OpenConvert/OpenConvert-desktop/releases/download/0.1.0/openconvert-0.1.0-x64.nsis.7z" "$INSTDIR\win.7z" /end ;edit https-link to file url
     Nsis7z::ExtractWithDetails "$INSTDIR\win.7z" "Extracking archives %s..."
     Delete "$INSTDIR\win.7z"
     Pop $0 
@@ -37,7 +37,7 @@ SectionGroup "Converters" converters
     Section "Audio and video" ffmpeg
         AddSize 128165
         SetOutPath "$INSTDIR\bin"
-        inetc::get /caption "ffmpeg" /popup "" "https://objects.githubusercontent.com/github-production-release-asset-2e65be/893131123/acb91b0d-77eb-4b97-b297-7c506f5437be?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20241123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241123T162233Z&X-Amz-Expires=300&X-Amz-Signature=60fdc48624bf78ab71423184a935eafc2f19e6bfbe1814d61c76f29e1f9ddb5c&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dffmpeg.7z&response-content-type=application%2Foctet-stream" "$INSTDIR\ffmpeg.7z" /end ;edit https-link to file url
+        inetc::get /caption "ffmpeg" /popup "" "https://github.com/OpenConvert/website/releases/download/0.0.0/ffmpeg.7z" "$INSTDIR\ffmpeg.7z" /end ;edit https-link to file url
         Nsis7z::ExtractWithDetails "$INSTDIR\ffmpeg.7z" "Extracking archives %s..."
         Delete "$INSTDIR\ffmpeg.7z"
         Pop $1 
@@ -47,7 +47,7 @@ SectionGroup "Converters" converters
     Section "Image" libvips
         AddSize 417792
         SetOutPath "$INSTDIR\bin"
-        inetc::get /caption "libvips" /popup "" "https://objects.githubusercontent.com/github-production-release-asset-2e65be/893131123/18591c0a-1206-4a51-b282-1089f89b6ed1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20241123%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241123T162239Z&X-Amz-Expires=300&X-Amz-Signature=579696f53bcff9083e95402304748d47e6fc7018c1659083d8e50c13098f77ec&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dlibvips.7z&response-content-type=application%2Foctet-stream" "$INSTDIR\libvips.7z" /end ;edit https-link to file url
+        inetc::get /caption "libvips" /popup "" "https://github.com/OpenConvert/website/releases/download/0.0.0/libvips.7z" "$INSTDIR\libvips.7z" /end ;edit https-link to file url
         Nsis7z::ExtractWithDetails "$INSTDIR\libvips.7z" "Extracking archives %s..."
         Delete "$INSTDIR\libvips.7z"
         Pop $2 
