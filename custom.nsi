@@ -30,7 +30,7 @@ Section "Main program" main
 SectionEnd
 
 Section "Desktop Shortcut" DeskShort
-    CreateShortCut "$DESKTOP\${Name}.lnk" "$INSTDIR\$Name.exe"
+    CreateShortCut "$DESKTOP\${Name}.lnk" "$INSTDIR\${Name}.exe"
 SectionEnd
 
 SectionGroup "Converters" converters
