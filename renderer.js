@@ -2,7 +2,6 @@ const dropArea = document.querySelector('.drag-area');
 const dragText = document.querySelector('.header');
 let input = dropArea.querySelector('input');
 const convertButton = document.querySelector('.convert-all');
-const converted_Total = document.querySelector('.converted-total')
 const convertOptions = document.querySelector('.convert-options');
 const imageLog = document.querySelector('.imageLog');
 const history = document.getElementById('show-history');
@@ -182,10 +181,3 @@ searchInp.addEventListener("keyup", () => {
 });
 
 selectBtn.addEventListener("click", () => wrapper.classList.toggle("active"));
-// byte 2 Mb
-function byte2Mb(byte){
-  return (byte/(1024*1024)).toFixed(2)
-}
-const total = convertedTotal.getTotal()
-let id = convertedTotal.getId()
-converted_Total.innerHTML = `You're alrady converted <b>${id}files</b>  with total size of <b>${byte2Mb(total)}mb</b>`

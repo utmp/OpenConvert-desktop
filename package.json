@@ -20,8 +20,7 @@
     "nsisWeb":{
       "allowToChangeInstallationDirectory": true,
       "oneClick":false
-    },
-    "afterAllArtifactBuild":"./afterUnpack.js"
+    }
   },
   "keywords": [
     "converter",

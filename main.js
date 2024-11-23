@@ -48,21 +48,18 @@ ipcMain.on("convert-image",(event,image)=>{
         imageConverter(image.imagepth,image.filename,image.filesize,image.fileExtension)
     }
     shell.openPath(path.join(dir,`${custom}`))
-    addData(image.filename,image.filesize)
 })
 ipcMain.on("convert-video",(event,video)=>{
     for(i=0;i<video.fileLength;i++){
         videoConverter(video.videopath,video.filename,video.filesize,video.fileExtension)
     }
     shell.openPath(path.join(dir,`${custom}`))
-    addData(video.filename,video.filesize)
 })
 ipcMain.on('convert-audio',(event,audio)=>{
     for(i=0;i<audio.fileLength;i++){
         audioConverter(audio.audiopath,audio.filename,audio.filesize,audio.fileExtension)
     }
     shell.openPath(path.join(dir,`${custom}`))
-    addData(audio.filename,audio.filesize)
 })
 ipcMain.on('minimize-window',()=>{
     mainWindow.minimize()
@@ -95,34 +92,6 @@ function settingsWindow(){
     settingWindow.setResizable(false);
     settingWindow.on('close',()=>{settingWindow==null})
     settingWindow.setMenu(null)
-}
-/*
-    writeDatabase function
-    json based
-*/
-const dbFilePath = path.join(__dirname,'./db.json')
-const readDb = ()=>{
-    if(fs.existsSync(dbFilePath)){
-        const data = fs.readFileSync(dbFilePath)
-        try{
-            return JSON.parse(data);
-        }catch(error){
-            console.log(error)
-            return [];
-        }
-    }else{
-        return[]
-    }
-}
-const writeDb = (data)=>{
-    fs.writeFileSync(dbFilePath,JSON.stringify(data,null,2))
-}
-const addData = (fileName,fileSize)=>{
-    const db = readDb()
-    const newId = db.length > 0 ? db[db.length-1].id+1 : 1;
-    const newData = {id:newId,fileName,fileSize}
-    db.push(newData);
-    writeDb(db);
 }
 //dark mode\\
 ipcMain.handle('dark-mode-toggle',()=>{
