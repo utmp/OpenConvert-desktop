@@ -1,7 +1,6 @@
 const path = require('node:path')
 const os = require('node:os');
 const fs = require('node:fs');
-const sharp = require('sharp');
 const {app, BrowserWindow,ipcMain,screen,dialog, nativeTheme,shell} = require('electron');
 const {exec} = require('child_process');
 let custom = "OpenConvert"
@@ -153,9 +152,11 @@ async function videoConverter(video,filename,filesize,fileExtension){
 async function imageConverter(image,filename,filesize,fileExtension){
     const filepath = path.join(dir,`./${custom}/${filename}.${fileExtension}`)
     try {
-        await sharp(image)
-        .toFile(filepath)
-       
+        await exec(`vips copy "${image}" "${filepath}"`,(err,out,outerr)=>{
+            if(err){
+                throw err;
+            }
+        })  
     } catch (error) {
         throw error
     }  

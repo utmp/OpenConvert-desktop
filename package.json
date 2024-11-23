@@ -1,12 +1,25 @@
 {
   "name": "openconvert",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "All in one file converter app",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "package-win": "electron-builder -w",
     "package-linux": "electron-builder -l"
+  },
+  "build": {
+    "appId": "com.openconvert.app",
+    "win": {
+      "icon": "./icons/logo.ico",
+      "target":"nsis-web"
+    },
+    "asarUnpack": "./custom.nsi",
+    "nsisWeb":{
+      "allowToChangeInstallationDirectory": true,
+      "oneClick":false
+    },
+    "afterAllArtifactBuild":"./afterUnpack.js"
   },
   "keywords": [
     "converter",
@@ -19,11 +32,8 @@
   ],
   "author": "utmp",
   "license": "GPL-3.0",
-  "dependencies": {
-    "electron-builder": "^25.1.8",
-    "sharp": "^0.33.5"
-  },
   "devDependencies": {
-    "electron": "^33.0.2"
+    "electron": "^33.0.2",
+    "electron-builder": "^25.1.8"
   }
 }
