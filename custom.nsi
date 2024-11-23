@@ -1,7 +1,7 @@
 !include "MUI.nsh"
 !include "WinMessages.nsh"
 !include "LogicLib.nsh"
-!define Name "OpenConvert"
+!define Name "openconvert"
 !define VERSION "0.1.0"
 !define MUI_ICON "..\..\icons\logo.ico"
 InstallDir "$PROGRAMFILES\OpenConvert"
@@ -30,7 +30,7 @@ Section "Main program" main
 SectionEnd
 
 Section "Desktop Shortcut" DeskShort
-    CreateShortCut "$DESKTOP\${Name}.lnk" "$INSTDIR\my-app.exe"
+    CreateShortCut "$DESKTOP\${Name}.lnk" "$INSTDIR\$Name.exe"
 SectionEnd
 
 SectionGroup "Converters" converters
