@@ -14,7 +14,6 @@
       "icon": "./icons/logo.ico",
       "target":"nsis-web"
     },
-    "asarUnpack": "./custom.nsi",
     "nsisWeb":{
       "allowToChangeInstallationDirectory": true,
       "oneClick":false
