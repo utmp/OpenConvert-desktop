@@ -13,18 +13,16 @@
 **OpenConvert** written in purely **html,css,javascrip** and Electronjs framework. Database json based (switching to [SQLite](https://sqlite.org))
 ## Features
 - Convert multiple files at once
-- Convert files to different formats
+- One click install in windows
 - Responsive Ui
 ## Install
-There is one additional step required before installing.<br>
-Install **[ffmpeg](https://ffmpeg.org)** for video and audio convertion<br>
-- Windows `winget install --id=Gyan.FFmpeg  -e ` <br>
-- Linux: `apt install ffmpeg`
-- and then download executables from **[here](https://github.com/OpenConvert/OpenConvert-desktop/releases)**
-## Screenshot
+- For executables checkout our [website](https://openconvert.github.io/website) or release [page](https://github.com/openconvert/openconvert-desktop/releases)
+- Linux users need to install [ffmpeg](https://ffmpeg.org) and [libvips](https://libvips.org)
+- Building from source code and documentation page available in a few days
+## Demo
 
 <p align="center">
-  <img src="./icons/demo.gif" width="960" height="540" align="center">
+  <img src="./icons/demo.gif"align="center">
 </p>
 
 ## Supported files
@@ -56,7 +54,6 @@ To build for linux:
 ```
 npm run package-linux
 ```
-*There is problem with linux builds, packaged application size is very big (1gb around).Planning to switch another packager
 
 
 
