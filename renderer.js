@@ -18,7 +18,9 @@ function showSection(section) {
   });
   document.getElementById(section).style.display = 'block';
 }
-
+//dev console
+const text = "OpenConvert developer console";
+console.log(`%c${text}`, 'font-size: 20px; font-weight: bold;color:red;');
 showSection('home');
 //check file input\\
 function checkInput(){
