@@ -12,14 +12,14 @@
     "appId": "com.openconvert.app",
     "win": {
       "icon": "./icons/logo.ico",
-      "target":"nsis-web"
+      "target": "nsis-web"
     },
-    "linux":{
+    "linux": {
       "target": "appimage"
     },
-    "nsisWeb":{
+    "nsisWeb": {
       "allowToChangeInstallationDirectory": true,
-      "oneClick":false
+      "oneClick": false
     }
   },
   "keywords": [
@@ -36,5 +36,8 @@
   "devDependencies": {
     "electron": "^33.0.2",
     "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
   }
 }

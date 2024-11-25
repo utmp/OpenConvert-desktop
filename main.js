@@ -3,9 +3,15 @@ const os = require('node:os');
 const fs = require('node:fs');
 const {app, BrowserWindow,ipcMain,screen,dialog, nativeTheme,shell} = require('electron');
 const {exec} = require('child_process');
-let custom = "OpenConvert"
-const dir = os.homedir()
-if(!fs.existsSync(path.join(dir,`${custom}`))){fs.mkdirSync(path.join(dir,`${custom}`))}
+const { writeData } = require('./db')
+let custom = "Converted-Files"
+let pwd = app.getAppPath('directory')
+//datatime\\
+const now = new Date();
+const date = now.toLocaleDateString(); 
+const time = now.toLocaleTimeString(); 
+//\\
+if(!fs.existsSync(path.join(__dirname,`${custom}`))){fs.mkdirSync(path.join(__dirname,`${custom}`))}
 let mainWindow,settingWindow;
 function createMainWindow(){
     const primaryDisplay = screen.getPrimaryDisplay()
@@ -47,19 +53,19 @@ ipcMain.on("convert-image",(event,image)=>{
     for(i=0;i<image.fileLength;i++){
         imageConverter(image.imagepth,image.filename,image.filesize,image.fileExtension)
     }
-    shell.openPath(path.join(dir,`${custom}`))
+    shell.openPath(path.join(pwd,`${custom}`))
 })
 ipcMain.on("convert-video",(event,video)=>{
     for(i=0;i<video.fileLength;i++){
         videoConverter(video.videopath,video.filename,video.filesize,video.fileExtension)
     }
-    shell.openPath(path.join(dir,`${custom}`))
+    shell.openPath(path.join(pwd,`${custom}`))
 })
 ipcMain.on('convert-audio',(event,audio)=>{
     for(i=0;i<audio.fileLength;i++){
         audioConverter(audio.audiopath,audio.filename,audio.filesize,audio.fileExtension)
     }
-    shell.openPath(path.join(dir,`${custom}`))
+    shell.openPath(path.join(pwd,`${custom}`))
 })
 ipcMain.on('minimize-window',()=>{
     mainWindow.minimize()
@@ -107,7 +113,7 @@ ipcMain.handle('dark-mode-system',()=>{
 })
 // converter functions \\
 async function videoConverter(video,filename,filesize,fileExtension){
-    const filepath = path.join(dir,`./${custom}/${filename}(1).${fileExtension}`)
+    const filepath = path.join(pwd,`./${custom}/${filename}(1).${fileExtension}`)
     try {
        await exec(`ffmpeg -i "${video}" "${filepath}"`,(err,stdout,stderr)=>{
         if(err){
@@ -117,9 +123,10 @@ async function videoConverter(video,filename,filesize,fileExtension){
     } catch (error) {
         throw error;
     }
+    writeData(`${date}${time}`,filesize,filename,filepath)
 }
 async function imageConverter(image,filename,filesize,fileExtension){
-    const filepath = path.join(dir,`./${custom}/${filename}.${fileExtension}`)
+    const filepath = path.join(pwd,`./${custom}/${filename}.${fileExtension}`)
     try {
         await exec(`vips copy "${image}" "${filepath}"`,(err,out,outerr)=>{
             if(err){
@@ -128,10 +135,11 @@ async function imageConverter(image,filename,filesize,fileExtension){
         })  
     } catch (error) {
         throw error
-    }  
+    }
+    writeData(`${date}${time}`,filesize,filename,filepath)
 }
 async function audioConverter(audio,filename,filesize,fileExtension){
-    const filepath = path.join(dir,`./${custom}/${filename}.${fileExtension}`)
+    const filepath = path.join(pwd,`./${custom}/${filename}.${fileExtension}`)
     try{
         await exec(`ffmpeg -i "${audio}" "${filepath}"`,(err,out,outerr)=>{
             if(err){
@@ -141,4 +149,5 @@ async function audioConverter(audio,filename,filesize,fileExtension){
     }catch(err){
         throw err;
     }
+    writeData(`${date}${time}`,filesize,filename,filepath)
 }
