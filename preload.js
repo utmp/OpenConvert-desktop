@@ -1,6 +1,7 @@
 const os = require('node:os');
 const path = require('node:path')
 const {contextBridge,ipcRenderer,webUtils} = require('electron');
+const { getSumOfData } = require('./db')
 contextBridge.exposeInMainWorld('os',{
     homedir:()=>os.homedir()
 })
@@ -46,4 +47,10 @@ window.addEventListener('DOMContentLoaded',()=>{
 contextBridge.exposeInMainWorld('darkMode',{
     toggle: ()=> ipcRenderer.invoke('dark-mode-toggle'),
     system:()=> ipcRenderer.invoke('dark-mode-system')
+})
+//write total size of converted files to footer\\
+window.addEventListener("DOMContentLoaded",()=>{
+    getSumOfData((err,res)=>{
+    err ? console.log(err) : document.querySelector('.converted-total').innerHTML=`You are already converted ${res.count}, and ${res.total}`
+})
 })

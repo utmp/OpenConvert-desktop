@@ -10,7 +10,10 @@
 <h4 align="center">OpenConvert is your swiss army knife for file convertion</h4>
 
 ## Technologies
-**OpenConvert** written in purely **html,css,javascript** and Electronjs framework. No database for now (planning to use [SQLite](https://sqlite.org))
+
+**OpenConvert** written in purely **html,css,javascript** and Electronjs framework. Database [SQLite](https://sqlite.org)
+=======
+
 ## Features
 - Convert multiple files at once
 - One click install in windows
