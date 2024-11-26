@@ -38,7 +38,6 @@ function createMainWindow(){
             preload:path.join(__dirname,'preload.js')
         }
     })
-    
     mainWindow.loadFile(path.join(__dirname,'index.html'))
     mainWindow.on('closed',()=>{mainWindow==null;})
     //mainWindow.webContents.openDevTools(); //--> open dev tools if you want
