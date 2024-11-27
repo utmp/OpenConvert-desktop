@@ -51,6 +51,6 @@ contextBridge.exposeInMainWorld('darkMode',{
 //write total size of converted files to footer\\
 window.addEventListener("DOMContentLoaded",()=>{
     getSumOfData((err,res)=>{
-    err ? console.log(err) : document.querySelector('.converted-total').innerHTML=`You are already converted ${res.count}, and ${res.total}`
+    err ? console.log(err) : document.querySelector('.converted-total').innerHTML=`You are already converted ${res.count}files total size of ${(res.total/(1024*1024)).toFixed(2)}mb`
 })
 })
