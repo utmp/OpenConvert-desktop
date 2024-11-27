@@ -15,7 +15,8 @@ RequestExecutionLevel admin
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_LANGUAGE "English"
-
+!insertmacro MUI_FINISHPAGE_TEXT_REBOOTNOW "Reboot now"
+!insertmacro MUI_FINISHPAGE_SHOWREADME "Reboot now"
 Section "Main program" main
     CreateDirectory "$INSTDIR\bin"
     AddSize 315392
@@ -27,6 +28,7 @@ Section "Main program" main
     Pop $0 
     MessageBox MB_OK "status: $0"
     nsExec::ExecToStack 'setx PATH "$INSTDIR\bin"'
+    SetRebootFlag true
 SectionEnd
 
 Section "Desktop Shortcut" DeskShort
