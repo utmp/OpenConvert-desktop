@@ -53,18 +53,21 @@ ipcMain.on("convert-image",(event,image)=>{
         imageConverter(image.imagepth,image.filename,image.filesize,image.fileExtension)
     }
     shell.openPath(path.join(pwd,`${custom}`))
+    writeData(`${date} ${time}`,image.filesize,image.filename,image.imagepth)
 })
 ipcMain.on("convert-video",(event,video)=>{
     for(i=0;i<video.fileLength;i++){
         videoConverter(video.videopath,video.filename,video.filesize,video.fileExtension)
     }
     shell.openPath(path.join(pwd,`${custom}`))
+    writeData(`${date} ${time}`,video.filesize,video.filename,video.videopath)
 })
 ipcMain.on('convert-audio',(event,audio)=>{
     for(i=0;i<audio.fileLength;i++){
         audioConverter(audio.audiopath,audio.filename,audio.filesize,audio.fileExtension)
     }
     shell.openPath(path.join(pwd,`${custom}`))
+    writeData(`${date} ${time}`,audio.filesize,audio.filename,audio.audiopath)
 })
 ipcMain.on('minimize-window',()=>{
     mainWindow.minimize()
@@ -122,7 +125,6 @@ async function videoConverter(video,filename,filesize,fileExtension){
     } catch (error) {
         throw error;
     }
-    writeData(`${date}${time}`,filesize,filename,filepath)
 }
 async function imageConverter(image,filename,filesize,fileExtension){
     const filepath = path.join(pwd,`./${custom}/${filename}.${fileExtension}`)
@@ -135,7 +137,6 @@ async function imageConverter(image,filename,filesize,fileExtension){
     } catch (error) {
         throw error
     }
-    writeData(`${date}${time}`,filesize,filename,filepath)
 }
 async function audioConverter(audio,filename,filesize,fileExtension){
     const filepath = path.join(pwd,`./${custom}/${filename}.${fileExtension}`)
@@ -148,5 +149,4 @@ async function audioConverter(audio,filename,filesize,fileExtension){
     }catch(err){
         throw err;
     }
-    writeData(`${date}${time}`,filesize,filename,filepath)
 }
