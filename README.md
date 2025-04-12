@@ -1,9 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/openconvert"><img src="./icons/logo.png" width="200"></a>
-  <br>
-  OpenConvert
-  <br>
+  <a href="https://github.com/openconvert"><img src="./resources/logo.png" width="200"></a>
   <br>
 </h1>
 
@@ -11,7 +8,7 @@
 
 ## Technologies
 
-**OpenConvert** written in purely **html,css,javascript** and Electronjs framework. Database [SQLite](https://sqlite.org)
+**OpenConvert** written in purely **html,css,javascript** and Electronjs framework. 
 =======
 
 ## Features
@@ -22,42 +19,46 @@
 - For executables checkout our [website](https://openconvert.github.io/website) or release [page](https://github.com/openconvert/openconvert-desktop/releases)
 - Linux users need to install [ffmpeg](https://ffmpeg.org) and [libvips](https://libvips.org)
 - Building from source code and documentation page available in a few days
-## Demo
+<!-- ## Demo -->
 
-<p align="center">
-  <img src="./icons/demo.gif"align="center">
-</p>
+
 
 ## Supported files
 - Image: png, jpg, gif, webp, jxl, bmp, avif, tiff
-- Video: mp4, mkv, avi, mov, gif, 3gp
-- Audio: aac, mp3, mp4a, wav
+- ~~Video: mp4, mkv, avi, mov, gif, 3gp~~
+- ~~Audio: aac, mp3, mp4a, wav~~
 ## How to Contribute
 We need designer, tester and contributers. **OpenConvert** is prototype. If you want to contribute read [this](./CONTRIBUTING.md)
 ### Install dependencies
 
 ```
-$ npm install
+$ pnpm install
 ```
 
 ### Run app
 
 ```
-$ npm start
+$ pnpm run start
 ```
-
+### Run dev server
+```
+$ pnpm run dev
+```
 ### Package app
 
 To build for windows:
 
 ```
-$ npm run package-win
+$ pnpm run build:win
 ```
 To build for linux:
 ```
-npm run package-linux
+$ pnpm run build:linux
 ```
-
+To build for mac:
+```
+$ pnpm build:mac
+```
 
 
 ## License
