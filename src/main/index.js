@@ -1,6 +1,12 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import icon from '../../resources/icon.png?asset'
+import sharp from 'sharp'
+import { promises as fs } from 'fs'
+import path from 'path'
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -47,8 +53,63 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  // Handle dialog to select directory
+  ipcMain.handle('dialog:selectDirectory', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+      title: 'Select output directory'
+    })
+    if (canceled) return null
+    return filePaths[0]
+  })
+  
+  // Handle image processing with Sharp
+// In your main process
+ipcMain.handle('process:image', async (_, { filepath, name, options, savePath }) => {
+  console.log(filepath)
+  try {
+    let pipeline = sharp(filepath);
+    
+    // Resize if dimensions provided
+    if (options.width && options.height) {
+      pipeline = pipeline.resize(options.width, options.height, {
+        fit: sharp.fit.contain,
+        withoutEnlargement: true
+      });
+    }
+    
+    // Set quality
+    if (options.format === 'webp') {
+      pipeline = pipeline.webp({ quality: options.quality });
+    } else if (options.format === 'jpeg') {
+      pipeline = pipeline.jpeg({ quality: options.quality });
+    } else if (options.format === 'png') {
+      pipeline = pipeline.png({ quality: options.quality });
+    } else if (options.format === 'avif') {
+      pipeline = pipeline.avif({ quality: options.quality });
+    }
+    
+    // Generate output filename
+    const parsedName = path.parse(name);
+    const outputName = `${parsedName.name}.${options.format}`;
+    const outputPath = path.join(savePath, outputName);
+    
+    // Process and save
+    await pipeline.toFile(outputPath);
+    
+    return {
+      success: true,
+      message: 'File processed successfully',
+      outputPath
+    };
+  } catch (error) {
+    console.error('Error processing image:', error);
+    return {
+      success: false,
+      message: `Error: ${error.message}`
+    };
+  }
+});
 
   createWindow()
 
