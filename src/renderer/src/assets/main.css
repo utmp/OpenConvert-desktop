@@ -1,2 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@theme{
+    --color-midnight:#191e24;
+}
