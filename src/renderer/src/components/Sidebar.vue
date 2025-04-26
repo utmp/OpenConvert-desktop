@@ -28,24 +28,6 @@
                   </span>
                 </a>
               </li>
-  
-              <li>
-                <router-link
-                  to="/categories"
-                  class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-[#ffffff1a] hover:text-gray-700"
-                  :class="{ 'bg-gradient-to-r from-pink-500 to-purple-600 shadow-pink-600 shadow-[0_4px_20px_rgba(0,0,0,0.3)]': $route.path === '/categories' }"
-
-                >
-              <img src="../assets/categories.svg" class="size-7">
-  
-                  <span
-                    class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible"
-                  >
-                   <router-link to="/categories"> Categories</router-link>
-                  </span>
-                </router-link>
-              </li>
-  
               <li>
                 <router-link
                   to="/plugins"
@@ -67,7 +49,7 @@
                 class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-[#ffffff1a] hover:text-gray-700"
                 :class="{ 'bg-gradient-to-r from-pink-500 to-purple-600 shadow-pink-600 shadow-[0_4px_20px_rgba(0,0,0,0.3)]': $route.path === '/history' }"
 
-                >
+>
                <img src="../assets/history.svg" class="size-6">
 <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible"
                   >
