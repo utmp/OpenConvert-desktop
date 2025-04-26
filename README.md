@@ -38,22 +38,22 @@ $ pnpm install
 ### Run app
 
 ```
-$ pnpm run start
+$ pnpm start
 ```
 ### Run dev server
 ```
-$ pnpm run dev
+$ pnpm dev
 ```
 ### Package app
 
 To build for windows:
 
 ```
-$ pnpm run build:win
+$ pnpm build:win
 ```
 To build for linux:
 ```
-$ pnpm run build:linux
+$ pnpm build:linux
 ```
 To build for mac:
 ```
