@@ -7,11 +7,6 @@ const routes = [
         component: Upload
     },
     {
-        path:'/categories',
-        name: 'categories',
-        component: () => import('../src/components/Categories.vue')
-    },
-    {
         path: '/plugins',
         name: 'plugins',
         component: () => import('../src/components/Plugins.vue')
