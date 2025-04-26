@@ -162,7 +162,6 @@ function showUploader() {
 // Process files using Sharp
 async function processFiles() {
   if (files.value.length === 0) return
-
   isProcessing.value = true
   processedFiles.value = []
 
@@ -219,6 +218,19 @@ async function processFiles() {
   }
 }
 
+// process one 
+async function processOne(){
+  if(files.value.length === 0) return;
+  isProcessing.value = true
+  processedFiles.value = []
+  try {
+    
+  } catch (error) {
+    
+  }finally{
+    isProcessing.value = false
+  }
+}
 onMounted(() => {
   const dropArea = document.querySelector('.drop-area')
   const folderIcon = document.querySelector('.folder-icon')
@@ -293,14 +305,14 @@ onMounted(() => {
     <!-- File preview section -->
     <div v-if="files.length > 0" class="w-full">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-medium text-gray-200">Files ({{ files.length }})</h3>
-        <div class="flex gap-2">
-          <button
+<button
             @click="clickInput"
             class="btn btn-sm btn-outline btn-primary"
           ><img src="../assets/plus.svg" class="w-5 h-5">
             Add More Files
           </button>
+        <div class="flex gap-2">
+          
            
       <!-- Process button -->
         <button @click="processFiles" class="btn btn-primary btn-outline btn-sm" :disabled="isProcessing">
@@ -311,11 +323,16 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- File list -->
+      <!-- Tab group -->
+       <!-- name of each tab group should be unique -->
+<div class="tabs tabs-box">
+  <input type="radio" name="my_tabs_6" class="tab" aria-label="Files" checked="checked"/>
+  <div class="tab-content bg-base-100 border-base-300 p-6 max-h-[calc(100vh-9rem)] overflow-y-auto">
+     <!-- File list -->
             <div
         v-for="(preview, index) in previewUrls"
         :key="index"
-        class="bg-gray-700 rounded-lg p-4 flex relative m-4 items-center gap-4"
+        class=" p-4 flex relative m-4 items-center gap-4 border-5 border-midnight rounded-lg hover:border-indigo-500"
       >
         <!-- Image preview -->
         <div class="flex-shrink-0">
@@ -351,7 +368,7 @@ onMounted(() => {
       <dialog :id="`image_preview_${index}`" class="modal">
     <div class="modal-box max-w-5xl bg-gray-800 p-0">
       <form method="dialog">
-        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white">✕</button>
+        <button class="btn btn-sm btn-circle absolute right-2 top-2 text-white">✕</button>
       </form>
       <figure>
         <img 
@@ -444,6 +461,13 @@ onMounted(() => {
                   <option value="png">PNG</option>
                   <option value="jpeg">JPEG</option>
                   <option value="avif">AVIF</option>
+                  <option value="gif">GIF</option>
+                  <option value="jp2">JP2</option>
+                  <option value="tiff">TIFF</option>
+                  <option value="heif">HEIF</option>
+                  <option value="jxl">JXL</option>
+                  <option value="tile">Tile</option>
+                  <option value="raw">Raw (base64)</option>
                 </select>
               </div>
         
@@ -505,8 +529,15 @@ onMounted(() => {
                 </label>
               </div>
         
-              <!-- Reset button -->
-              <div class="flex justify-end">
+              <!-- Reset,Save buttons -->
+              <div class="flex justify-end space-x-3">
+                   <button
+                  :onclick="`document.getElementById('close-modal${index}').click()`"
+                  class="btn btn-xs btn-outline btn-success"
+                  :disabled="!preview.url"
+                >
+                  Save
+                </button> 
                 <button
                   @click="
                     fileOptions[index] = {
@@ -517,7 +548,7 @@ onMounted(() => {
                       format: getTargetFormat(preview.type)
                     }
                   "
-                  class="btn btn-xs btn-outline"
+                  class="btn btn-xs btn-outline btn-warning"
                   :disabled="!preview.url"
                 >
                   Reset
@@ -526,7 +557,7 @@ onMounted(() => {
             </div>
           </div>
           <form method="dialog" class="modal-backdrop">
-            <button>close</button>
+            <button :id="`close-modal${index}`">close</button>
           </form>
         </dialog>
 
@@ -571,9 +602,14 @@ onMounted(() => {
             </div>
           </div>
       </div>
-    
+  </div>
 
-      <!-- Results summary -->
+  <input type="radio" name="my_tabs_6" class="tab" aria-label="Completed"  />
+  <div class="indicator">
+  <span class="indicator-item badge badge-secondary">{{files.length}}</span>
+</div>
+  <div class="tab-content bg-base-100 border-base-300 p-6 max-h-[calc(100vh-9rem)]">
+     <!-- Results summary -->
       <div v-if="processedFiles.length > 0" class="mt-6 bg-gray-800 rounded-lg p-4">
         <h3 class="text-lg font-medium text-gray-200 mb-3">Results</h3>
         <ul class="space-y-2">
@@ -591,6 +627,8 @@ onMounted(() => {
           </li>
         </ul>
       </div>
+    </div>
+</div>
     </div>
   </div>
 </template>
