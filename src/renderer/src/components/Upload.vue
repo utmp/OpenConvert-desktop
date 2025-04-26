@@ -326,7 +326,7 @@ onMounted(() => {
       <!-- Tab group -->
        <!-- name of each tab group should be unique -->
 <div class="tabs tabs-box">
-  <input type="radio" name="my_tabs_6" class="tab" aria-label="Files" checked="checked"/>
+  <input type="radio" name="my_tabs_6" class="tab" :aria-label="`Files (${files.length})`" checked/>
   <div class="tab-content bg-base-100 border-base-300 p-6 max-h-[calc(100vh-9rem)] overflow-y-auto">
      <!-- File list -->
             <div
@@ -578,13 +578,10 @@ onMounted(() => {
       </div>
   </div>
 
-  <input type="radio" name="my_tabs_6" class="tab" aria-label="Completed"  />
-  <div class="indicator">
-  <span class="indicator-item badge badge-secondary">{{files.length}}</span>
-</div>
+  <input type="radio" name="my_tabs_6" class="tab" :aria-label="`Completed ${processedFiles.length > 0 ? ( processedFiles.length ): ''}`" />
   <div class="tab-content bg-base-100 border-base-300 p-6 max-h-[calc(100vh-9rem)]">
      <!-- Results summary -->
-      <div v-if="processedFiles.length > 0" class="mt-6 bg-gray-800 rounded-lg p-4">
+      <div v-if="processedFiles.length > 0" class="mt-6 border-3 border-midnight rounded-lg p-4">
         <h3 class="text-lg font-medium text-gray-200 mb-3">Results</h3>
         <ul class="space-y-2">
           <li
@@ -601,6 +598,10 @@ onMounted(() => {
           </li>
         </ul>
       </div>
+      <div v-else>
+        <p class="text-sm">No files have been converted yet</p>
+        <p class="text-xs mt-2">Convert some files to see results here</p>
+</div>
     </div>
 </div>
     </div>
