@@ -564,40 +564,14 @@ onMounted(() => {
         
         <div
             v-if="processedFiles[index]"
-            class="absolute inset-0 bg-gray-800 bg-opacity-80 rounded-lg flex flex-col items-center justify-center"
+            class="absolute inset-0 bg-midnight bg-opacity-0 rounded-lg flex flex-col items-center justify-center"
           >
             <div v-if="processedFiles[index].success" class="text-success mb-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-10 w-10"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+              <img src="../assets/success.svg" class="h-10 w-10">
               <p class="text-sm mt-1">Successfully processed</p>
             </div>
             <div v-else class="text-error mb-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-10 w-10"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <img src="../assets/error.svg" class="h-10 w-10">
               <p class="text-sm mt-1">{{ processedFiles[index].message }}</p>
             </div>
           </div>
