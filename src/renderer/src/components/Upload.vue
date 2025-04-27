@@ -219,18 +219,53 @@ async function processFiles() {
 }
 
 // process one 
-async function processOne(){
-  if(files.value.length === 0) return;
-  isProcessing.value = true
-  processedFiles.value = []
-  try {
-    
-  } catch (error) {
-    
-  }finally{
-    isProcessing.value = false
-  }
-}
+//async function processOne(index){
+//   try {
+//     processedFiles.value=[index]
+//     isProcessing.value = true
+//     // Ask user for save directory
+//     const savePath = await ipcRenderer.invoke('dialog:selectDirectory')
+//     if (!savePath) {
+//       isProcessing.value = false
+//       return // User cancelled
+//     }
+//       const file = files.value[index]
+//       const filepath = files.value[index].path
+//       const options = fileOptions.value[index]
+//       const preview = previewUrls.value[index]
+//       if (!file.type.startsWith('image/')) {
+//         processedFiles.value.push({
+//           name: file.name,
+//           success: false,
+//           message: 'Only image files can be processed'
+//         })
+//       }
+//       // console.log(filepath)
+//     // Send to main process for processing with Sharp
+//     const result = await ipcRenderer.invoke('process:image', {
+//       filepath, 
+//       name: file.name,
+//       options: {
+//         width: options.width,
+//         height: options.height,
+//         quality: options.quality,
+//         format: options.format
+//       },
+//       savePath
+//     });
+//     console.log(result)
+//       processedFiles.value[index] = {
+//         name: file.name,
+//         success: result.success,
+//         message: result.message, 
+//         outputPath: result.outputPath
+//       }
+//   } catch (error) {
+//     console.error('Error processing files:', error)
+//   } finally {
+//     isProcessing.value = false
+//   }
+// }
 onMounted(() => {
   const dropArea = document.querySelector('.drop-area')
   const folderIcon = document.querySelector('.folder-icon')
@@ -332,7 +367,7 @@ onMounted(() => {
             <div
         v-for="(preview, index) in previewUrls"
         :key="index"
-        class=" p-4 flex relative m-4 items-center gap-4 border-5 border-midnight rounded-lg hover:border-indigo-500"
+        class=" p-4 flex relative m-4 items-center gap-4 border-5 border-midnight rounded-lg hover:border-indigo-500 group"
       >
         <!-- Image preview -->
         <div class="flex-shrink-0">
@@ -424,7 +459,10 @@ onMounted(() => {
   </div>
 </div>
         <!-- Buttons -->
-        <div class="flex-shrink-0 flex flex-col gap-5 ml-auto">
+        <button class="hidden group-hover:flex btn btn-sm btn-circle absolute right-2 top-0.5 text-gray-400 hover:bg-transparent hover:text-red-400 hover:border-red-400"
+        @click="removeFile(index)"
+        >✕</button>
+        <div class="flex-shrink-0 flex flex-col gap-5 ml-auto pt-2">
           <button
             class="btn btn-sm btn-primary"
             :onclick="`document.getElementById('options_modal_${index}').showModal()`"
@@ -462,12 +500,10 @@ onMounted(() => {
                   <option value="jpeg">JPEG</option>
                   <option value="avif">AVIF</option>
                   <option value="gif">GIF</option>
-                  <option value="jp2">JP2</option>
                   <option value="tiff">TIFF</option>
                   <option value="heif">HEIF</option>
                   <option value="jxl">JXL</option>
                   <option value="tile">Tile</option>
-                  <option value="raw">Raw (base64)</option>
                 </select>
               </div>
         
