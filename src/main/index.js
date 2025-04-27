@@ -87,6 +87,17 @@ ipcMain.handle('process:image', async (_, { filepath, name, options, savePath })
       pipeline = pipeline.png({ quality: options.quality });
     } else if (options.format === 'avif') {
       pipeline = pipeline.avif({ quality: options.quality });
+    }else if (options.format === 'tiff') {
+      pipeline = pipeline.tiff({ quality: options.quality });
+    }else if (options.format === 'heif') {
+      pipeline = pipeline.heif({ quality: options.quality });
+    }else if (options.format === 'jxl') {
+      pipeline = pipeline.jxl({ quality: options.quality });
+    }
+    
+    // control if output type is tile    
+    if(options.format === 'tile'){
+      options.format = 'zip'
     }
     
     // Generate output filename
