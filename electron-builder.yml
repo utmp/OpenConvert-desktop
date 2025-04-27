@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: yeni
+appId: com.openconvert.app
+productName: openconvert
 directories:
   buildResources: build
 files:
@@ -13,12 +13,16 @@ asarUnpack:
   - "**/node_modules/sharp/**/*"
   - "**/node_modules/@img/**/*"
 win:
-  executableName: yeni
+  executableName: openconvert
+  icon: '/resources/logo.ico'
 nsis:
+  oneClick: false
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+  allowToChangeInstallationDirectory: true
+  license: LICENSE
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
@@ -34,7 +38,7 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: electronjs.org
+  maintainer: openconvert
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
