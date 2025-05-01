@@ -28,6 +28,7 @@
  - Tailwindcss 
  - Vite
  - daisyUI (component library)
+ - Database Sqlite3
 ## How to Contribute
 We need designer, tester and contributers. **OpenConvert** is prototype. If you want to contribute read [this](./CONTRIBUTING.md)
 ### Install dependencies
