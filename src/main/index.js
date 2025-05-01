@@ -7,6 +7,7 @@ import sharp from 'sharp'
 import fs from 'fs'
 import path from 'path'
 import { checkPluginInstalled, getSupportedFormats,documentConvert,isFormatSupported } from './initPlugin'
+import {db,saveConversion,getAllConversions} from './db'
 function createWindow() {
   const primaryDisplay = screen.getPrimaryDisplay();
   const {width,height} = primaryDisplay.workAreaSize  
@@ -233,5 +234,29 @@ ipcMain.handle('plugin:uninstall', async (event,pluginId)=>{
   }catch(error){
     console.error('Failed to delete plugin: ',error)
     throw error
+  }
+})
+//database operations
+ipcMain.handle('db:save-history',async(_,conversionData)=>{
+  try {
+    const id = await saveConversion(
+      conversionData.filename,
+      conversionData.format,
+      conversionData.resolution || 'NaN',
+      conversionData.size
+    )
+    return { success: true, id }
+  } catch (error) {
+    console.error('Error saving conversion:', error)
+    return { success: false, error: error.message }
+  }
+})
+ipcMain.handle('db:get-data',async ()=>{
+  try {
+    const conversions = await getAllConversions()
+    return { success: true, conversions }
+  } catch (error) {
+    console.error('Error getting conversions:', error)
+    return { success: false, error: error.message }
   }
 })
