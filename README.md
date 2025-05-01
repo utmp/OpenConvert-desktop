@@ -19,6 +19,7 @@
 
 ## Supported files
 - Image: png, jpg, gif, webp, jxl, bmp, avif, tiff
+- Document: pdf, epub, xps, cbz, mobi, fb2 and many more ...
 - ~~Video: mp4, mkv, avi, mov, gif, 3gp~~
 - ~~Audio: aac, mp3, mp4a, wav~~
 ## 🛠 Tech stack
