@@ -1,17 +1,20 @@
 
-import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog,session,screen } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import sharp from 'sharp'
-import { promises as fs } from 'fs'
+import fs from 'fs'
 import path from 'path'
-
+import { checkPluginInstalled, getSupportedFormats,documentConvert,isFormatSupported } from './initPlugin'
 function createWindow() {
-  // Create the browser window.
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const {width,height} = primaryDisplay.workAreaSize  
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    minWidth: width/2,
+    minHeight: height/1.5,
+    maxHeight: height,
+    maxWidth: width,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -48,7 +51,6 @@ app.whenReady().then(() => {
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
@@ -64,9 +66,7 @@ app.whenReady().then(() => {
   })
   
   // Handle image processing with Sharp
-// In your main process
 ipcMain.handle('process:image', async (_, { filepath, name, options, savePath }) => {
-  console.log(filepath)
   try {
     let pipeline = sharp(filepath);
     
@@ -94,12 +94,10 @@ ipcMain.handle('process:image', async (_, { filepath, name, options, savePath })
     }else if (options.format === 'jxl') {
       pipeline = pipeline.jxl({ quality: options.quality });
     }
-    
     // control if output type is tile    
     if(options.format === 'tile'){
       options.format = 'zip'
     }
-    
     // Generate output filename
     const parsedName = path.parse(name);
     const outputName = `${parsedName.name}.${options.format}`;
@@ -121,7 +119,7 @@ ipcMain.handle('process:image', async (_, { filepath, name, options, savePath })
     };
   }
 });
-
+  
   createWindow()
 
   app.on('activate', function () {
@@ -131,14 +129,109 @@ ipcMain.handle('process:image', async (_, { filepath, name, options, savePath })
   })
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
+// handle document conversion
+ipcMain.handle("document:convert", async (event, {filename,inputPath,outputPath, options}) => {
+  console.log('parameters', inputPath,outputPath,filename);
+  try {
+    const isInstalled = await checkPluginInstalled();
+    if (!isInstalled) {
+      return {
+        success: false,
+        message: 'MuPDF is not installed. Please install it from Plugins page'
+      };
+    }
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+    // Validate input format
+    const inputFormat = path.extname(inputPath).slice(1);
+    if (!isFormatSupported(inputFormat, 'input')) {
+      return {
+        success: false,
+        message: `Unsupported input format: ${inputFormat}`
+      };
+    }
+
+    // Validate output format
+    const outputFormat = options?.format || getDefaultOutputFormat(inputFormat);
+    if (!isFormatSupported(outputFormat, 'output')) {
+      return {
+        success: false,
+        message: `Unsupported output format: ${outputFormat}`
+      };
+    }
+
+    // Convert document
+    const result = await documentConvert(filename,inputPath,outputPath, {
+      format: outputFormat,
+      ...options
+    });
+
+    return result;
+  } catch (error) {
+    console.error('Document conversion error:', error);
+    return {
+      success: false,
+      message: error.message
+    };
+  }
+});
+ipcMain.handle('document:get-formats',async()=>{
+  return getSupportedFormats();
+})
+//check if plugin is installed
+ipcMain.handle('plugin:check-installed',async (event,pluginId)=>{
+  const pluginPath = path.join(app.getAppPath(),'out','Plugins',`${pluginId}.exe`)
+  return fs.existsSync(pluginPath)
+})
+
+// plugin installation
+ipcMain.handle('plugin:install',async(event,{url,id})=>{
+  const sess = session.defaultSession;
+  return new Promise((resolve, reject) => {
+   
+    
+    session.defaultSession.on('will-download', (event, item) => {
+      const PLUGINS_DIR = path.join(app.getAppPath(),'out', 'Plugins')
+      
+      // Create plugins directory if it doesn't exist
+      if (!fs.existsSync(PLUGINS_DIR)) {
+        fs.mkdirSync(PLUGINS_DIR, { recursive: true })
+      }
+      
+      const pluginPath = path.join(PLUGINS_DIR, `${id}.exe`)
+      item.setSavePath(pluginPath)
+
+      item.on('updated', (event, state) => {
+        if (state === 'interrupted') {
+          reject(new Error('Download interrupted'))
+        }
+      })
+
+      item.once('done', (event, state) => {
+        if (state === 'completed') {
+          resolve(true)
+        } else {
+          reject(new Error(`Download failed with state: ${state}`))
+        }
+      })
+    })
+     sess.downloadURL(url)
+  })
+})
+// delete plugin
+ipcMain.handle('plugin:uninstall', async (event,pluginId)=>{
+  const pluginPath = path.join(app.getAppPath(),'out','Plugins',`${pluginId}.exe`)
+  try{
+    if (fs.existsSync(pluginPath)){
+      await fs.promises.unlink(pluginPath)
+      return true
+    }
+  }catch(error){
+    console.error('Failed to delete plugin: ',error)
+    throw error
+  }
+})
