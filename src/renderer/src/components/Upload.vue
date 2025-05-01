@@ -2,7 +2,10 @@
 import { onMounted, ref } from 'vue'
 // Import electron API from preload
 const { ipcRenderer } = window.electron
-
+const supportedFormats = ref({
+  input: [],
+  output: []
+})
 const isDragging = ref(false)
 const files = ref([])
 const previewUrls = ref([])
@@ -53,44 +56,35 @@ function handleFiles(eventFiles) {
       }
       reader.readAsDataURL(file)
     } else {
-      // For non-image files, just add file info
-      const index = previewUrls.value.length
-      previewUrls.value.push({
-        name: file.name,
-        url: null,
-        size: formatFileSize(file.size),
-        type: file.type,
-        resolution: 'N/A'
-      })
+      const ext = file.name.split('.').pop().toLowerCase()
+      if (supportedFormats.value.input.includes(ext)) {
+        previewUrls.value.push({
+          name: file.name,
+          url: null,
+          size: formatFileSize(file.size),
+          type: file.type || `document/${ext}`,
+          resolution: 'N/A'
+        })
 
-      // Initialize options for this file
-      fileOptions.value.push({
-        width: null,
-        height: null,
-        quality: 90,
-        keepAspectRatio: true,
-        format: getTargetFormat(file.type) // Default output format
-      })
+        // Initialize options for document
+        fileOptions.value.push({
+          format: supportedFormats.value.output[0]
+        })
+      } else {
+        console.warn(`Unsupported document format: ${ext}`)
+      }
     }
   })
-
-  // Hide the upload area when files are present
   showUploadArea.value = false
 }
 
 // Get default target format based on input format
 function getTargetFormat(mimeType) {
-  // Default to webp for images
   if (mimeType.startsWith('image/')) {
     return 'webp'
   }
-  // Keep original format for other file types
   return mimeType.split('/')[1]
 }
-
-// Toggle options popup for a file
-
-
 // Update dimensions while maintaining aspect ratio
 function updateDimensions(index, dimension, value) {
   const options = fileOptions.value[index]
@@ -158,20 +152,34 @@ function removeFile(index) {
 function showUploader() {
   showUploadArea.value = true
 }
-
+function resetOptions(index) {
+  const preview = previewUrls.value[index]
+  if (preview.url) {
+    // Reset image options
+    fileOptions.value[index] = {
+      width: preview.originalWidth,
+      height: preview.originalHeight,
+      quality: 90,
+      keepAspectRatio: true,
+      format: getTargetFormat(preview.type)
+    }
+  } else {
+    // Reset document options
+    fileOptions.value[index] = {
+      format: supportedFormats.value.output[0]
+    }
+  }
+}
 // Process files using Sharp
 async function processFiles() {
   if (files.value.length === 0) return
   isProcessing.value = true
   processedFiles.value = []
-
   try {
-    // Ask user for save directory
     const savePath = await ipcRenderer.invoke('dialog:selectDirectory')
-
     if (!savePath) {
       isProcessing.value = false
-      return // User cancelled
+      return
     }
 
     // Process each file one by one
@@ -179,37 +187,50 @@ async function processFiles() {
       const file = files.value[i]
       const filepath = files.value[i].path
       const options = fileOptions.value[i]
-      const preview = previewUrls.value[i]
+      if (file.type.startsWith('image/')) {
+        // Handle image files with Sharp
+        const result = await ipcRenderer.invoke('process:image', {
+          filepath, 
+          name: file.name,
+          options: {
+            width: options.width,
+            height: options.height,
+            quality: options.quality,
+            format: options.format
+          },
+          savePath
+        })
 
-      // Skip if not an image
-      if (!file.type.startsWith('image/')) {
         processedFiles.value.push({
           name: file.name,
-          success: false,
-          message: 'Only image files can be processed'
+          success: result.success,
+          message: result.message,
+          outputPath: result.outputPath
         })
-        continue
+      } else {
+        try {
+          const r = await ipcRenderer.invoke('document:convert',{
+            filename: file.name.split('.')[0],
+            inputPath: filepath,
+            outputPath: savePath,
+            options:{
+              format: fileOptions.value[i].format
+            }
+          })
+          processedFiles.value.push({
+            name: file.name,
+            success: r.success,
+            message: r.message,
+            outputPath: r.outputPath
+          })
+        } catch (error) {
+          processedFiles.value.push({
+            name: file.name,
+            success: false,
+            message: error.message
+          })
+        }
       }
-      // console.log(filepath)
-    // Send to main process for processing with Sharp
-    const result = await ipcRenderer.invoke('process:image', {
-      filepath, 
-      name: file.name,
-      options: {
-        width: options.width,
-        height: options.height,
-        quality: options.quality,
-        format: options.format
-      },
-      savePath
-    });
-
-      processedFiles.value.push({
-        name: file.name,
-        success: result.success,
-        message: result.message,
-        outputPath: result.outputPath
-      })
     }
   } catch (error) {
     console.error('Error processing files:', error)
@@ -218,55 +239,7 @@ async function processFiles() {
   }
 }
 
-// process one 
-//async function processOne(index){
-//   try {
-//     processedFiles.value=[index]
-//     isProcessing.value = true
-//     // Ask user for save directory
-//     const savePath = await ipcRenderer.invoke('dialog:selectDirectory')
-//     if (!savePath) {
-//       isProcessing.value = false
-//       return // User cancelled
-//     }
-//       const file = files.value[index]
-//       const filepath = files.value[index].path
-//       const options = fileOptions.value[index]
-//       const preview = previewUrls.value[index]
-//       if (!file.type.startsWith('image/')) {
-//         processedFiles.value.push({
-//           name: file.name,
-//           success: false,
-//           message: 'Only image files can be processed'
-//         })
-//       }
-//       // console.log(filepath)
-//     // Send to main process for processing with Sharp
-//     const result = await ipcRenderer.invoke('process:image', {
-//       filepath, 
-//       name: file.name,
-//       options: {
-//         width: options.width,
-//         height: options.height,
-//         quality: options.quality,
-//         format: options.format
-//       },
-//       savePath
-//     });
-//     console.log(result)
-//       processedFiles.value[index] = {
-//         name: file.name,
-//         success: result.success,
-//         message: result.message, 
-//         outputPath: result.outputPath
-//       }
-//   } catch (error) {
-//     console.error('Error processing files:', error)
-//   } finally {
-//     isProcessing.value = false
-//   }
-// }
-onMounted(() => {
+onMounted(async() => {
   const dropArea = document.querySelector('.drop-area')
   const folderIcon = document.querySelector('.folder-icon')
   const defPath = folderIcon.src
@@ -312,8 +285,12 @@ onMounted(() => {
     const droppedFiles = e.dataTransfer.files
     handleFiles(droppedFiles)
   })
-
-  // Add click listener to handle closing popups
+  try{
+    const formats = await ipcRenderer.invoke('document:get-formats')
+    supportedFormats.value = formats
+  }catch(error){
+    console.error("Failed to get supported formats: ",error)
+  }
 })
 </script>
 
@@ -486,106 +463,109 @@ onMounted(() => {
             <h3 class="font-bold text-lg text-gray-200 mb-4">Output Options</h3>
             
             <div class="space-y-3">
-              <!-- Format selection -->
-              <div class="form-control" v-if="preview.url">
-                <label class="label p-0">
-                  <span class="label-text text-xs text-gray-400">Format</span>
-                </label>
-                <select
-                  v-model="fileOptions[index].format"
-                  class="select select-sm select-bordered w-full bg-gray-700"
-                >
-                  <option value="webp">WebP</option>
-                  <option value="png">PNG</option>
-                  <option value="jpeg">JPEG</option>
-                  <option value="avif">AVIF</option>
-                  <option value="gif">GIF</option>
-                  <option value="tiff">TIFF</option>
-                  <option value="heif">HEIF</option>
-                  <option value="jxl">JXL</option>
-                  <option value="tile">Tile</option>
-                </select>
-              </div>
-        
-              <!-- Width input -->
-              <div class="form-control">
-                <label class="label p-0">
-                  <span class="label-text text-xs text-gray-400">Width (px)</span>
-                </label>
-                <input
-                  type="number"
-                  v-model="fileOptions[index].width"
-                  @input="(e) => updateDimensions(index, 'width', e.target.value)"
-                  class="input input-sm input-bordered w-full bg-gray-700"
-                  :disabled="!preview.url"
-                />
-              </div>
-        
-              <!-- Height input -->
-              <div class="form-control">
-                <label class="label p-0">
-                  <span class="label-text text-xs text-gray-400">Height (px)</span>
-                </label>
-                <input
-                  type="number"
-                  v-model="fileOptions[index].height"
-                  @input="(e) => updateDimensions(index, 'height', e.target.value)"
-                  class="input input-sm input-bordered w-full bg-gray-700"
-                  :disabled="!preview.url"
-                />
-              </div>
-        
-              <!-- Quality slider -->
-              <div class="form-control">
-                <label class="label p-0">
-                  <span class="label-text text-xs text-gray-400"
-                    >Quality: {{ fileOptions[index].quality }}%</span
+              <!-- Image Options -->
+              <template v-if="preview.url">
+                <!-- Format selection for images -->
+                <div class="form-control">
+                  <label class="label p-0">
+                    <span class="label-text text-xs text-gray-400">Format</span>
+                  </label>
+                  <select
+                    v-model="fileOptions[index].format"
+                    class="select select-sm select-bordered w-full bg-gray-700"
                   >
-                </label>
-                <input
-                  type="range"
-                  v-model="fileOptions[index].quality"
-                  min="1"
-                  max="100"
-                  class="range range-xs range-primary"
-                  :disabled="!preview.url"
-                />
-              </div>
+                    <option value="webp">WebP</option>
+                    <option value="png">PNG</option>
+                    <option value="jpeg">JPEG</option>
+                    <option value="avif">AVIF</option>
+                    <option value="gif">GIF</option>
+                    <option value="tiff">TIFF</option>
+                    <option value="heif">HEIF</option>
+                    <option value="jxl">JXL</option>
+                    <option value="tile">Tile</option>
+                  </select>
+                </div>
         
-              <!-- Aspect ratio toggle -->
-              <div class="form-control">
-                <label class="label cursor-pointer justify-start gap-2 p-0">
+                <!-- Image specific options -->
+                <div class="form-control">
+                  <label class="label p-0">
+                    <span class="label-text text-xs text-gray-400">Width (px)</span>
+                  </label>
                   <input
-                    type="checkbox"
-                    v-model="fileOptions[index].keepAspectRatio"
-                    class="checkbox checkbox-xs checkbox-primary"
-                    :disabled="!preview.url"
+                    type="number"
+                    v-model="fileOptions[index].width"
+                    @input="(e) => updateDimensions(index, 'width', e.target.value)"
+                    class="input input-sm input-bordered w-full bg-gray-700"
                   />
-                  <span class="label-text text-xs text-gray-400">Maintain aspect ratio</span>
-                </label>
-              </div>
+                </div>
         
-              <!-- Reset,Save buttons -->
+                <div class="form-control">
+                  <label class="label p-0">
+                    <span class="label-text text-xs text-gray-400">Height (px)</span>
+                  </label>
+                  <input
+                    type="number"
+                    v-model="fileOptions[index].height"
+                    @input="(e) => updateDimensions(index, 'height', e.target.value)"
+                    class="input input-sm input-bordered w-full bg-gray-700"
+                  />
+                </div>
+        
+                <div class="form-control">
+                  <label class="label p-0">
+                    <span class="label-text text-xs text-gray-400">Quality: {{ fileOptions[index].quality }}%</span>
+                  </label>
+                  <input
+                    type="range"
+                    v-model="fileOptions[index].quality"
+                    min="1"
+                    max="100"
+                    class="range range-xs range-primary"
+                  />
+                </div>
+        
+                <div class="form-control">
+                  <label class="label cursor-pointer justify-start gap-2 p-0">
+                    <input
+                      type="checkbox"
+                      v-model="fileOptions[index].keepAspectRatio"
+                      class="checkbox checkbox-xs checkbox-primary"
+                    />
+                    <span class="label-text text-xs text-gray-400">Maintain aspect ratio</span>
+                  </label>
+                </div>
+              </template>
+        
+              <!-- Document Options -->
+              <template v-else>
+                <div class="form-control">
+                  <label class="label p-0">
+                    <span class="label-text text-xs text-gray-400">Output Format</span>
+                  </label>
+                  <select
+                    v-model="fileOptions[index].format"
+                    class="select select-sm select-bordered w-full bg-gray-700"
+                  >
+                    <option v-for="format in supportedFormats.output" 
+                            :key="format" 
+                            :value="format">
+                      {{ format.toUpperCase() }}
+                    </option>
+                  </select>
+                </div>
+              </template>
+        
+              <!-- Reset, Save buttons -->
               <div class="flex justify-end space-x-3">
-                   <button
+                <button
                   :onclick="`document.getElementById('close-modal${index}').click()`"
                   class="btn btn-xs btn-outline btn-success"
-                  :disabled="!preview.url"
                 >
                   Save
-                </button> 
+                </button>
                 <button
-                  @click="
-                    fileOptions[index] = {
-                      width: preview.originalWidth,
-                      height: preview.originalHeight,
-                      quality: 90,
-                      keepAspectRatio: true,
-                      format: getTargetFormat(preview.type)
-                    }
-                  "
+                  @click="resetOptions(index)"
                   class="btn btn-xs btn-outline btn-warning"
-                  :disabled="!preview.url"
                 >
                   Reset
                 </button>

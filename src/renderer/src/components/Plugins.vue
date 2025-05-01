@@ -1,31 +1,36 @@
 <script setup>
-import { ref } from 'vue'
-
+import { ref,onMounted } from 'vue'
+const {ipcRenderer} = window.electron
+const isInstalling = ref(false)
 const plugins = ref([
   {
-    id: 'pandoc',
-    name: 'Pandoc Document Converter',
-    publisher: 'OpenConvert',
-    summary: 'Universal document converter supporting Markdown, HTML, LaTeX, DOCX, PDF and many more formats',
-    github: 'https://github.com/jgm/pandoc',
-    version: '3.1.11',
-    fileSize: '23.4 MB',
+    id: 'mutool',
+    name: 'MuPDF',
+    publisher: 'utmp',
+    summary: 'Universal document converter supporting HTML, EPUB, MOBI, DOCX, PDF and many more formats',
+    github: 'https://github.com/ArtifexSoftware/mupdf',
+    version: '1.25.2',
+    fileSize: '39.9 MB',
     installed: false,
-    formats: {
-      input: ['markdown', 'html', 'latex', 'docx', 'odt', 'epub'],
-      output: ['pdf', 'docx', 'html', 'markdown', 'epub', 'latex'] 
-    }
   }
 ])
-
+onMounted(async () => {
+  for (const plugin of plugins.value) {
+    const isInstalled = await ipcRenderer.invoke('plugin:check-installed', plugin.id)
+    plugin.installed = isInstalled
+  }
+})
 async function installPlugin(pluginId) {
   const plugin = plugins.value.find(p => p.id === pluginId)
   if (!plugin) return
-
+  isInstalling.value = true
   try {
-    // Here we would normally call the electron API to install the plugin
-    // For now just simulate installation
+    await ipcRenderer.invoke('plugin:install',{
+      url: 'https://github.com/OpenConvert/website/releases/download/0.0.0/mutool.exe',
+      id: pluginId
+    })
     plugin.installed = true
+    isInstalling.value = false
   } catch (error) {
     console.error('Failed to install plugin:', error)
   }
@@ -36,7 +41,7 @@ async function uninstallPlugin(pluginId) {
   if (!plugin) return
 
   try {
-    // Here we would normally call the electron API to uninstall the plugin
+    await ipcRenderer.invoke('plugin:uninstall',pluginId)
     plugin.installed = false 
   } catch (error) {
     console.error('Failed to uninstall plugin:', error)
@@ -56,7 +61,7 @@ async function uninstallPlugin(pluginId) {
         <!-- Plugin Icon (maybe in future releases)-->
         <div class="flex-shrink-0">
           <div class="bg-gray-600 h-32 w-32 rounded flex items-center justify-center">
-<img src="https://pandoc.org/pandoc-cartoon.svgz">
+<img src="https://mupdf.readthedocs.io/en/latest/_static/mupdf-sidebar-logo-light.png">
 
           </div>
         </div>
@@ -96,7 +101,9 @@ async function uninstallPlugin(pluginId) {
             @click="plugin.installed ? uninstallPlugin(plugin.id) : installPlugin(plugin.id)"
             class="btn btn-sm"
             :class="plugin.installed ? 'btn-error' : 'btn-primary'"
-          >
+          > <span v-if="isInstalling" class="loading loading-spinner">
+            {{ isInstalling ? 'Installing' : 'Install' }}
+          </span>
             {{ plugin.installed ? 'Uninstall' : 'Install' }}
           </button>
         </div>

@@ -23,3 +23,6 @@ if (process.contextIsolated) {
   window.electron = electronAPI
   window.api = api
 }
+contextBridge.exposeInMainWorld('electronAPI',{
+  dwnPlugin: (url) => ipcRenderer.send('plugin:install',url)
+})
