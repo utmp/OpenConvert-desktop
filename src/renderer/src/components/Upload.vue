@@ -207,6 +207,14 @@ async function processFiles() {
           message: result.message,
           outputPath: result.outputPath
         })
+        if (result.success) {
+          await ipcRenderer.invoke('db:save-history', {
+            filename: file.name,
+            format: options.format,
+            resolution: `${options.width}x${options.height}`,
+            size: formatFileSize(file.size) 
+          })
+        }
       } else {
         try {
           const r = await ipcRenderer.invoke('document:convert',{
@@ -223,6 +231,13 @@ async function processFiles() {
             message: r.message,
             outputPath: r.outputPath
           })
+          if (r.success) {
+            await ipcRenderer.invoke('db:save-history', {
+              filename: file.name,
+              format: fileOptions.value[i].format,
+              size: formatFileSize(file.size)
+            })
+          }
         } catch (error) {
           processedFiles.value.push({
             name: file.name,
