@@ -316,7 +316,7 @@ onMounted(async() => {
     <div v-if="showUploadArea" class="drop-area flex items-center justify-center min-h-screen">
       <label
         for="dropzone-file"
-        class="flex flex-col items-center justify-center w-4/5 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
+        class="flex flex-col items-center justify-center w-4/5 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer"
         :class="{ 'border-primary': isDragging }"
       >
         <div class="flex flex-col items-center justify-center pt-5 pb-6">
@@ -324,7 +324,7 @@ onMounted(async() => {
           <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
             <span class="font-semibold">Click to upload</span> or drag and drop
           </p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Files will be processed here</p>
+          <p class="text-xs text-gray-500">Files will be processed here</p>
         </div>
       </label>
     </div>
@@ -336,7 +336,7 @@ onMounted(async() => {
             @click="clickInput"
             class="btn btn-sm btn-outline btn-primary"
           ><img src="../assets/plus.svg" class="w-5 h-5">
-            Add More Files
+            Add Files
           </button>
         <div class="flex gap-2">
           
@@ -412,7 +412,7 @@ onMounted(async() => {
 
         <!-- File info -->
         <div class="w-1/3 flex flex-col justify-between">
-          <div class="text-sm text-gray-300 space-y-2">
+          <div class="text-sm space-y-2">
             <div class="flex items-center gap-2">
               <img src="../assets/file.svg" class="w-5 h-5" alt="File Icon" />
               <p class="truncate" :title="preview.name">{{ preview.name }}</p>
@@ -436,7 +436,7 @@ onMounted(async() => {
           <img src="../assets/arrow.svg" class="w-14 rotate-180">
         </div>
       <!-- convert file info's -->
-      <div class="w-1/3 ml-12 flex flex-col text-xs text-gray-400 space-y-2">
+      <div class="w-1/3 ml-12 flex flex-col text-xs space-y-2">
   <div class="flex items-center gap-2">
     <img src="../assets/output.svg" class="w-5 h-5" alt="">
     <span>{{ fileOptions[index].format.toUpperCase() }}</span>
@@ -471,7 +471,7 @@ onMounted(async() => {
         </div>
         <!-- Open options popup-->
         <dialog :id="`options_modal_${index}`" class="modal">
-          <div class="modal-box bg-gray-800">
+          <div class="modal-box bg-info-content">
             <form method="dialog">
               <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white">✕</button>
             </form>
