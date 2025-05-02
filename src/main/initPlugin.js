@@ -99,16 +99,6 @@ export async function checkPluginInstalled() {
     if (!exists) {
       return false;
     }
-    await new Promise((resolve, reject) => {
-      execFile(pluginPath, ['--version'], (error, stdout, stderr) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(stdout);
-        }
-      });
-    });
-
     return true;
   } catch (error) {
     console.error('Plugin check failed:', error);

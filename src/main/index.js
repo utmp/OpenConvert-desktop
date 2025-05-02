@@ -137,7 +137,6 @@ app.on('window-all-closed', () => {
 })
 // handle document conversion
 ipcMain.handle("document:convert", async (event, {filename,inputPath,outputPath, options}) => {
-  console.log('parameters', inputPath,outputPath,filename);
   try {
     const isInstalled = await checkPluginInstalled();
     if (!isInstalled) {
