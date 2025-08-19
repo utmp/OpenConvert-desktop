@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/openconvert"><img src="./resources/logo.png" width="200"></a>
+  <a href="https://github.com/openconvert"><img src="./resources/icon.png" width="200"></a>
   <br>
 </h1>
 

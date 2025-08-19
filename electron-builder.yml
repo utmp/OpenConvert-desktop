@@ -1,28 +1,23 @@
-appId: com.openconvert.app
-productName: openconvert
+appId: com.electron.app
+productName: openconvert-desktop
 directories:
   buildResources: build
 files:
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 asarUnpack:
   - resources/**
-  - "**/node_modules/sharp/**/*"
-  - "**/node_modules/@img/**/*"
 win:
-  executableName: openconvert
-  icon: '/resources/logo.ico'
+  executableName: openconvert-desktop
 nsis:
-  oneClick: false
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
-  allowToChangeInstallationDirectory: true
-  license: LICENSE
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
@@ -38,7 +33,7 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: openconvert
+  maintainer: electronjs.org
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}

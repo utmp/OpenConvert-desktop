@@ -1,7 +1,7 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
-import vue from '@vitejs/plugin-vue'
-import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()]
@@ -15,6 +15,6 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [vue(),tailwindcss()]
+    plugins: [react(),tailwindcss()]
   }
 })
