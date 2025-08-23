@@ -11,10 +11,10 @@ function App() {
   return (
     <Router>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <SidebarProvider>
       <div className="flex h-screen bg-background">
+      <SidebarProvider>
         <AppSidebar />
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1">
           <SidebarTrigger />
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -24,10 +24,10 @@ function App() {
             <Route path="/categories" element={<CategoriesPage />} />
           </Routes>
         </main>
-      </div>
        </SidebarProvider>
+      </div>
        </ThemeProvider>
-    </Router>
+    </Router> 
   )
 }
 

@@ -1,6 +1,10 @@
+import TableUpload from "../table-upload"
 export const HomePage = () => (
-  <div className="p-6">
-    <h1 className="text-3xl font-bold mb-4">Home Page</h1>
-    <p>Welcome to the home page!</p>
+  <>
+ <div className="flex flex-col items-center justify center">
+   <div className="flex flex-col p-4 w-4/5 items-center justify-center min-h-[calc(100vh-4rem)]">
+    <TableUpload />
   </div>
+ </div>
+ </>
 )
