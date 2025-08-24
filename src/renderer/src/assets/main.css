@@ -109,7 +109,21 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
 
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply  rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-zinc-800 rounded-full hover:bg-zinc-700;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-zinc-700;
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;

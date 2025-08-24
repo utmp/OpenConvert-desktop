@@ -58,7 +58,7 @@ interface TableUploadProps {
 }
 
 export default function TableUpload({
-  maxFiles = 10,
+  maxFiles = 90,
   maxSize = 50 * 1024 * 1024, // 50MB
   accept = '*',
   multiple = true,
