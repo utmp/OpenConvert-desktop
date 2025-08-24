@@ -7,10 +7,12 @@ import { PluginsPage } from './components/Pages/Plugins'
 import { HistoryPage } from './components/Pages/History'
 import { HomePage } from './components/Pages/Home'
 import CategoriesPage from './components/Pages/Categories'
-
+import { SettingsProvider } from './contexts/SettingsContext'
+import { Toaster } from '@renderer/components/ui/sonner'
 function App() {
   return (
     <Router>
+      <SettingsProvider>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div className="fixed inset-0 flex bg-background overflow-hidden">
           <SidebarProvider>
@@ -29,9 +31,11 @@ function App() {
                 </Routes>
               </div>
             </main>
+            <Toaster />
           </SidebarProvider>
         </div>
       </ThemeProvider>
+      </SettingsProvider>
     </Router>
   )
 }

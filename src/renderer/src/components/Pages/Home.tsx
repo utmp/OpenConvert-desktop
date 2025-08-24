@@ -12,13 +12,13 @@ export const HomePage = () => (
       </div>
     </div>
 
-    <div className="sticky bottom-0 flex items-center justify-center gap-4 w-full p-4 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="sticky bottom-0 flex items-center justify-center gap-4 w-full p-4 border-t bg-neutral-900">
       <Button
         variant="outline"
         size="sm"
         className="gap-2"
         onClick={() => {
-          /* TODO: Handle output folder selection */
+          /*  Handle output folder selection */
         }}
       >
         <Folder className="size-4" />

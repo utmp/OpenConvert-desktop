@@ -4,7 +4,6 @@ import { Button } from "@renderer/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem
 } from "@renderer/components/ui/dropdown-menu"

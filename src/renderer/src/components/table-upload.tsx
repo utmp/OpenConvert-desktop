@@ -1,4 +1,4 @@
-'use client'
+// TableUpload.tsx - Updated to use settings
 import { Progress } from '@renderer/components/ui/progress'
 import { useEffect, useState } from 'react'
 import {
@@ -7,6 +7,7 @@ import {
   type FileMetadata,
   type FileWithPreview
 } from '@renderer/lib/use-file-upload'
+import { useFormattedSettings } from '@renderer/contexts/SettingsContext'
 import {
   Alert,
   AlertContent,
@@ -15,31 +16,22 @@ import {
   AlertTitle,
   AlertToolbar
 } from '@renderer/components/ui/alert'
-import { Badge } from '@renderer/components/ui/badge'
 import { Button } from '@renderer/components/ui/button'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@renderer/components/ui/table'
-import {
-  CloudUpload,
   FileArchiveIcon,
   FileSpreadsheetIcon,
   FileTextIcon,
   HeadphonesIcon,
   ImageIcon,
   RefreshCwIcon,
-  Trash2,
   TriangleAlert,
   Upload,
   VideoIcon,
-  XIcon
+  XIcon,
+  Settings
 } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
+import { Badge } from '@renderer/components/ui/badge'
 
 interface FileUploadItem extends FileWithPreview {
   progress: number
@@ -48,29 +40,23 @@ interface FileUploadItem extends FileWithPreview {
 }
 
 interface TableUploadProps {
-  maxFiles?: number
-  maxSize?: number
-  accept?: string
-  multiple?: boolean
   className?: string
   onFilesChange?: (files: FileWithPreview[]) => void
   simulateUpload?: boolean
 }
 
 export default function TableUpload({
-  maxFiles = 90,
-  maxSize = 50 * 1024 * 1024, // 50MB
-  accept = '*',
-  multiple = true,
   className,
   onFilesChange,
   simulateUpload = true
 }: TableUploadProps) {
+  // Get settings from context
+  const { maxFiles, maxFileSize, maxFileSizeFormatted, maxFileSizeBytes } = useFormattedSettings()
+
   // State declarations
   const [uploadFiles, setUploadFiles] = useState<FileUploadItem[]>([])
   const [imagePreviews, setImagePreviews] = useState<Record<string, string>>({})
-
-  // Create preview URL for images using FileReader for Electron compatibility
+  
   const createImagePreview = (file: File): Promise<string | null> => {
     return new Promise((resolve) => {
       try {
@@ -94,7 +80,6 @@ export default function TableUpload({
     { isDragging, errors },
     {
       removeFile,
-      clearFiles,
       handleDragEnter,
       handleDragLeave,
       handleDragOver,
@@ -104,11 +89,14 @@ export default function TableUpload({
     }
   ] = useFileUpload({
     maxFiles,
-    maxSize,
-    accept,
-    multiple,
+    maxSize: maxFileSizeBytes,
+    accept: '*',
+    multiple: true,
     initialFiles: [],
     onFilesChange: (newFiles) => {
+      console.log('Files changed:', newFiles)
+      console.log('Using settings - Max files:', maxFiles, 'Max size:', maxFileSizeFormatted)
+      
       // Convert to upload items when files change, preserving existing status
       const newUploadFiles = newFiles.map((file) => {
         // Check if this file already exists in uploadFiles
@@ -167,22 +155,10 @@ export default function TableUpload({
       setUploadFiles((prev) =>
         prev.map((file) => {
           if (file.status !== 'uploading') return file
-
-          const increment = Math.random() * 15 + 5 // 5-20% increment
-          const newProgress = Math.min(file.progress + increment, 100)
-
-          if (newProgress >= 100) {
-            // Randomly decide if upload succeeds or fails
-            const shouldFail = Math.random() < 0.1 // 10% chance to fail
-            return {
+          return {
               ...file,
-              progress: 100,
-              status: shouldFail ? ('error' as const) : ('completed' as const),
-              error: shouldFail ? 'Upload failed. Please try again.' : undefined
+              progress: 100
             }
-          }
-
-          return { ...file, progress: newProgress }
         })
       )
     }, 500)
@@ -283,13 +259,13 @@ export default function TableUpload({
                 </button>
               </p>
               <p className="text-sm text-muted-foreground">
-                Maximum file size: {formatBytes(maxSize)} • Maximum files: {maxFiles}
+                Maximum file size: {maxFileSizeFormatted} • Maximum files: {maxFiles}
               </p>
             </div>
           </div>
         </div>
       )}
-
+      
       {/* Files Table */}
       {uploadFiles.length > 0 && (
        <div className="mt-4 space-y-3">
@@ -297,7 +273,6 @@ export default function TableUpload({
             // Use data URL preview instead of blob URL
             const isImage = fileItem.file.type.startsWith('image/')
             const previewUrl = isImage ? imagePreviews[fileItem.id] : null
-            
             return (
               <div key={fileItem.id} className="rounded-lg border border-border bg-card p-4">
                 <div className="flex items-start gap-2.5">
